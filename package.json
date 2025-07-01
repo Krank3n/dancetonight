@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "start": "serve dist -s -l 3000",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -15,7 +16,8 @@
     "lottie-web": "^5.13.0",
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "serve": "^14.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
