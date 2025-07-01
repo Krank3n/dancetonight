@@ -1,0 +1,301 @@
+/* stylelint-disable */
+
+// Variable overrides
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;400;600;700;800;900&family=Roboto:wght@100;300;500;700;900&family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+// Type
+$headings-font-family: "Plus Jakarta Sans";
+$font-family-base: "Plus Jakarta Sans";
+
+// CoreUI Colors
+$white: #fff;
+$black: #000;
+
+$gray-base: #f1f4f8;
+$gray-100: #0a0a0f;
+$gray-200: #141420;
+$gray-300: #1a1a2e;
+$gray-400: #252540;
+$gray-500: #2f2f52;
+$gray-600: #444466;
+$gray-700: #6b6b8a;
+$gray-800: #b8b8d1;
+$gray-900: #f1f2f8;
+
+$grays: ();
+$grays: map-merge(
+                (
+                        "100": $gray-100,
+                        "200": $gray-200,
+                        "300": $gray-300,
+                        "400": $gray-400,
+                        "500": $gray-500,
+                        "600": $gray-600,
+                        "700": $gray-700,
+                        "800": $gray-800,
+                        "900": $gray-900
+                ),
+                $grays
+);
+
+// Bright Pink Primary with coordinated shades
+$primary-base: #ff1493;
+$primary-100: #ff9fd6;
+$primary-200: #ff80cc;
+$primary-300: #ff66c4;
+$primary-400: #ff4dbd;
+$primary-500: #ff33b5;
+$primary-600: #ff1493;
+$primary-700: #e6127a;
+$primary-800: #cc1066;
+$primary-900: #b30e52;
+
+$primary-dark: #e6127a;
+$primary: #ff1493;
+$primary-50: #ff4dbd;
+$primary-25: #ff80cc;
+
+$primary-gradient: (
+        "start": $primary,
+        "stop": $primary-dark
+);
+
+// Complementary purple-magenta secondary
+$secondary-base: #9d4edd;
+
+$secondary-100: #d4a6f0;
+$secondary-200: #c792ed;
+$secondary-300: #ba7ee9;
+$secondary-400: #ad6ae6;
+$secondary-500: #a056e2;
+$secondary-600: #9d4edd;
+$secondary-700: #8e46c7;
+$secondary-800: #7f3eb0;
+$secondary-900: #70369a;
+
+$secondary-dark: #8e46c7;
+$secondary: #9d4edd;
+$secondary-50: #ad6ae6;
+$secondary-25: #ba7ee9;
+$secondary-gradient: (
+        "start": $secondary,
+        "stop": $secondary-dark
+);
+
+// Modern coral danger
+$danger-dark: #ff4757;
+$danger: #ff6b7a;
+$danger-50: #ff9fb0;
+$danger-25: #ffc7d2;
+$danger-gradient: (
+        "start": $danger,
+        "stop": $danger-dark
+);
+
+// Electric blue info
+$info-dark: #3742fa;
+$info: #5352ed;
+$info-50: #7c7bff;
+$info-25: #a5a4ff;
+$info-gradient: (
+        "start": $info,
+        "stop": $info-dark
+);
+
+// Mint green success
+$success-dark: #00d2d3;
+$success: #00f5ff;
+$success-50: #33f7ff;
+$success-25: #66f9ff;
+$success-gradient: (
+        "start": $success,
+        "stop": $success-dark
+);
+
+// Vibrant orange warning
+$warning-dark: #ff9500;
+$warning: #ffb340;
+$warning-50: #ffc766;
+$warning-25: #ffdb8c;
+$warning-gradient: (
+        "start": $warning,
+        "stop": $warning-dark
+);
+
+$light: $gray-900;
+$light-gradient: (
+        "start": $light,
+        "stop": $gray-400
+);
+
+$dark: $gray-500;
+$dark-gradient: (
+        "start": $gray-200,
+        "stop": $gray-100
+);
+
+$bg-gradient-gray: linear-gradient(45deg, #252540, #2f2f52) !important;
+
+// Rating colors with pink theme
+$rating-20: #ff6b7a;
+$rating-40: #ff9500;
+$rating-60: #ffb340;
+$rating-80: #00f5ff;
+$rating-100: #ff1493;
+
+$pink: #ff1493;
+
+$theme-colors: ();
+$theme-colors: map-merge(
+                (
+                        "primary": $primary,
+                        "secondary": $secondary-50,
+                        "secondary-25": $secondary-25,
+                        "success": $success,
+                        "info": $info,
+                        "warning": $warning,
+                        "danger": $danger,
+                        "light": $light,
+                        "dark": $dark,
+                        "rating-20": $rating-20,
+                        "rating-40": $rating-40,
+                        "rating-60": $rating-60,
+                        "rating-80": $rating-80,
+                        "rating-100": $rating-100,
+                ),
+                $theme-colors
+);
+
+@media (min-width: 576px) {
+  $modal-scale-transform: scale(1);
+  $modal-fade-transform: translate(0, 50px);
+}
+
+// Set a specific jump point for requesting color jumps
+$theme-color-interval: 8%;
+
+// The yiq lightness value that determines when the lightness of color changes from "dark" to "light". Acceptable values are between 0 and 255.
+$yiq-contrasted-threshold: 150;
+
+// Customize the light and dark text colors for use in our YIQ color contrast function.
+$yiq-text-dark: $gray-900;
+$yiq-text-light: $white;
+
+$yiq-theme-map: ();
+$yiq-theme-map: map-merge(
+                (
+                        default: (
+                                "yiq-text-dark": $yiq-text-dark,
+                                "yiq-text-light": $yiq-text-light
+                        )
+                ),
+                $yiq-theme-map
+);
+
+// TODO: Move to better place
+// Characters which are escaped by the escape-svg function
+$escaped-characters: (
+                ("<", "%3c"),
+                (">", "%3e"),
+                ("#", "%23"),
+                ("(", "%28"),
+                (")", "%29"),
+);
+
+// Body with deeper, more refined dark background
+$body-bg: $gray-300;
+$body-color: $gray-base;
+$border-color: $gray-600;
+$hr-border-color: $gray-600;
+
+// Header
+$header-light-bg: $gray-500;
+$header-light-color: $body-color;
+$header-light-hover-color: rgba($body-color, 0.7);
+$header-light-active-color: rgba($body-color, 0.9);
+$header-light-disabled-color: rgba($body-color, 0.3);
+
+// Sub Header
+$subheader-light-bg: $gray-500;
+$subheader-light-color: $body-color;
+$subheader-light-hover-color: rgba($body-color, 0.7);
+$subheader-light-active-color: rgba($body-color, 0.9);
+$subheader-light-disabled-color: rgba($body-color, 0.3);
+
+// Breadcrumbs
+$breadcrumb-active-color: $gray-800;
+$breadcrumb-divider-color: $gray-700;
+
+// Pagination with pink accents
+$pagination-bg: $gray-400;
+$pagination-disabled-bg: $gray-400;
+$pagination-disabled-color: $primary;
+$pagination-disabled-border-color: $border-color;
+
+// Cards with subtle transparency
+$card-bg: $gray-400;
+$card-cap-bg: $gray-400;
+$card-cap-color: $body-color;
+$card-border-color: $gray-400;
+$card-bg-semi-transparent: rgba(26, 26, 46, 0.65);
+$card-animation-transition-time: 0.3s;
+
+// Modal
+$modal-content-bg: $gray-400;
+
+@media (max-width: 576px) {
+  $modal-fade-transform: translate(0, 50px);
+}
+
+// Toast
+$toast-background-color: $gray-400;
+$toast-header-background-color: $gray-500;
+$toast-header-color: $gray-900;
+
+// Popovers
+$popover-bg: $gray-200;
+$popover-body-color: $info;
+$popover-header-color: $gray-900;
+
+// Sidebar
+$sidebar-dark-bg: $gray-500;
+
+// DropDown
+$dropdown-bg: $gray-400;
+$dropdown-header-color: $gray-900;
+
+// Buttons with enhanced pink glow
+$btn-active-box-shadow: 0 0 0.6rem rgba(255, 20, 147, 0.5) !important;
+$btn-focus-box-shadow: 0 0 0.6rem rgba(255, 20, 147, 0.4) !important;
+
+//Nav
+$nav-tabs-link-active-bg: $gray-600;
+$nav-tabs-link-active-color: $gray-900;
+$nav-tabs-border-color: $border-color;
+$nav-tabs-boxed-left-active-border-color: $border-color;
+$nav-tabs-link-active-border-color: $border-color;
+$nav-tabs-link-hover-border-color: $border-color;
+
+// Input with pink focus states
+$input-btn-focus-box-shadow: 0 0 0.5rem rgba(255, 20, 147, 0.3) !important;
+$input-group-addon-bg: $primary;
+$input-group-addon-border-color: $primary;
+$input-group-addon-color: $white;
+$input-border-color: $gray-400 !important;
+$input-focus-bg: $gray-300;
+$input-color: $gray-800;
+$input-placeholder-color: $gray-700;
+$input-bg: $gray-300;
+
+// Close
+$close-color: $white;
+$close-text-shadow: none;
+
+// Table
+$table-head-bg: $gray-600;
+$table-head-color: $gray-800;
+
+// List Group
+$list-group-border-color: $border-color;
+/* stylelint-enable */

@@ -1,0 +1,8 @@
+{
+  "name": "DanceTonight",
+  "description": "DanceTonight instantly shows local dance events, lessons, socials, and free gatherings based on your location and preferences. Find tonight's dance floor at your fingertips.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "prompt": ""
+}
