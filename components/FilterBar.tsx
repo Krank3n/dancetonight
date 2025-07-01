@@ -2,7 +2,25 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Filters, DanceStyle, EventType, SkillLevel, CostCategory } from '../types';
 import { DANCE_STYLE_OPTIONS, EVENT_TYPE_OPTIONS, SKILL_LEVEL_OPTIONS, COST_CATEGORY_OPTIONS, RADIUS_OPTIONS, MAX_FUTURE_DAYS_PICKER } from '../constants';
 import { getISODateString, getTomorrowDate } from '../utils/dateUtils';
-import { ChevronDownIcon, LocationPinIcon } from './IconComponents';
+import {
+  ChevronDown,
+  MapPin,
+  Music,
+  Calendar,
+  DollarSign,
+  BarChart3,
+  Clock,
+  Sun,
+  Moon,
+  Search,
+  X,
+  Loader2,
+  Filter,
+  Star,
+  Users,
+  GraduationCap,
+  Heart
+} from 'lucide-react';
 import LocationDisplay from './LocationDisplay';
 
 interface FilterBarProps {
@@ -16,10 +34,10 @@ interface FilterBarProps {
 
 // Filter presets for quick selection
 const FILTER_PRESETS = [
-  { name: '🌃 Tonight\'s Social', filters: { date: 'tonight', eventType: 'social', danceStyle: 'any' } },
-  { name: '📚 Beginner Classes', filters: { eventType: 'lesson', skillLevel: 'beginner', danceStyle: 'any' } },
-  { name: '💃 Salsa Events', filters: { danceStyle: 'salsa', eventType: 'any' } },
-  { name: '🆓 Free Events', filters: { costCategory: 'free', eventType: 'any' } },
+  { name: 'Tonight\'s Social', icon: Moon, filters: { date: 'tonight', eventType: 'social', danceStyle: 'any' } },
+  { name: 'Beginner Classes', icon: GraduationCap, filters: { eventType: 'lesson', skillLevel: 'beginner', danceStyle: 'any' } },
+  { name: 'Salsa Events', icon: Music, filters: { danceStyle: 'salsa', eventType: 'any' } },
+  { name: 'Free Events', icon: Heart, filters: { costCategory: 'free', eventType: 'any' } },
 ];
 
 // Enhanced select component with better styling
@@ -29,11 +47,11 @@ const SelectInput: React.FC<{
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: readonly (string | number)[];
   id: string;
-  icon?: string;
-}> = ({ label, value, onChange, options, id, icon }) => (
+  icon?: React.ComponentType<{ className?: string }>;
+}> = ({ label, value, onChange, options, id, icon: Icon }) => (
     <div className="relative group">
       <label htmlFor={id} className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-        {icon && <span className="text-lg">{icon}</span>}
+        {Icon && typeof Icon === 'function' && <Icon className="w-4 h-4" />}
         {label}
       </label>
       <div className="relative">
@@ -50,7 +68,7 @@ const SelectInput: React.FC<{
               </option>
           ))}
         </select>
-        <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/60 pointer-events-none group-hover:text-white/80 transition-colors" />
+        {typeof ChevronDown === 'function' && <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/60 pointer-events-none group-hover:text-white/80 transition-colors" />}
       </div>
     </div>
 );
@@ -67,7 +85,8 @@ const DistanceSlider: React.FC<{
   return (
       <div className="relative group">
         <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-          📍 Distance: <span className="text-purple-400 font-bold">{value} km</span>
+          {typeof MapPin === 'function' && <MapPin className="w-4 h-4" />}
+          Distance: <span className="text-purple-400 font-bold">{value} km</span>
         </label>
         <div className="relative">
           <input
@@ -98,11 +117,11 @@ const ActiveFilterTags: React.FC<{
 }> = ({ filters, onRemoveFilter }) => {
   const activeTags = useMemo(() => {
     const tags = [];
-    if (filters.danceStyle !== 'any') tags.push({ key: 'danceStyle', label: `💃 ${filters.danceStyle}`, value: filters.danceStyle });
-    if (filters.eventType !== 'any') tags.push({ key: 'eventType', label: `🎭 ${filters.eventType}`, value: filters.eventType });
-    if (filters.costCategory !== 'any') tags.push({ key: 'costCategory', label: `💰 ${filters.costCategory}`, value: filters.costCategory });
-    if (filters.skillLevel !== 'any') tags.push({ key: 'skillLevel', label: `📊 ${filters.skillLevel}`, value: filters.skillLevel });
-    if (filters.manualLocationQuery) tags.push({ key: 'manualLocationQuery', label: `📍 ${filters.manualLocationQuery}`, value: filters.manualLocationQuery });
+    if (filters.danceStyle !== 'any') tags.push({ key: 'danceStyle', label: filters.danceStyle, value: filters.danceStyle, icon: Music });
+    if (filters.eventType !== 'any') tags.push({ key: 'eventType', label: filters.eventType, value: filters.eventType, icon: Users });
+    if (filters.costCategory !== 'any') tags.push({ key: 'costCategory', label: filters.costCategory, value: filters.costCategory, icon: DollarSign });
+    if (filters.skillLevel !== 'any') tags.push({ key: 'skillLevel', label: filters.skillLevel, value: filters.skillLevel, icon: BarChart3 });
+    if (filters.manualLocationQuery) tags.push({ key: 'manualLocationQuery', label: filters.manualLocationQuery, value: filters.manualLocationQuery, icon: MapPin });
     return tags;
   }, [filters]);
 
@@ -111,16 +130,20 @@ const ActiveFilterTags: React.FC<{
   return (
       <div className="flex flex-wrap gap-2 mb-4">
         <span className="text-sm font-medium text-gray-300">Active filters:</span>
-        {activeTags.map(tag => (
-            <button
-                key={tag.key}
-                onClick={() => onRemoveFilter(tag.key as keyof Filters)}
-                className="inline-flex items-center gap-1 px-3 py-1 bg-purple-500/20 border border-purple-400/30 text-purple-300 rounded-full text-sm hover:bg-purple-500/30 transition-colors"
-            >
-              {tag.label}
-              <span className="ml-1 hover:text-white">×</span>
-            </button>
-        ))}
+        {activeTags.map(tag => {
+          const IconComponent = tag.icon;
+          return (
+              <button
+                  key={tag.key}
+                  onClick={() => onRemoveFilter(tag.key as keyof Filters)}
+                  className="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/20 border border-purple-400/30 text-purple-300 rounded-full text-sm hover:bg-purple-500/30 transition-colors"
+              >
+                {IconComponent && typeof IconComponent === 'function' && <IconComponent className="w-3 h-3" />}
+                {tag.label}
+                {typeof X === 'function' && <X className="w-3 h-3 ml-1 hover:text-white" />}
+              </button>
+          );
+        })}
       </div>
   );
 };
@@ -229,15 +252,19 @@ const FilterBar: React.FC<FilterBarProps> = ({
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-300 mb-3">Quick Filters</h3>
               <div className="grid grid-cols-2 gap-2">
-                {FILTER_PRESETS.map((preset, index) => (
-                    <button
-                        key={index}
-                        onClick={() => handlePresetClick(preset)}
-                        className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl text-white text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95"
-                    >
-                      {preset.name}
-                    </button>
-                ))}
+                {FILTER_PRESETS.map((preset, index) => {
+                  const IconComponent = preset.icon;
+                  return (
+                      <button
+                          key={index}
+                          onClick={() => handlePresetClick(preset)}
+                          className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl text-white text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2"
+                      >
+                        {IconComponent && typeof IconComponent === 'function' && <IconComponent className="w-4 h-4" />}
+                        {preset.name}
+                      </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -247,28 +274,31 @@ const FilterBar: React.FC<FilterBarProps> = ({
             {/* Quick Date Selection */}
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-                📅 When?
+                {typeof Calendar === 'function' && <Calendar className="w-4 h-4" />}
+                When?
               </h3>
               <div className="flex gap-3">
                 <button
                     onClick={() => onFilterChange('date', 'tonight')}
-                    className={`flex-1 py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                    className={`flex-1 py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
                         filters.date === 'tonight'
                             ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25 scale-105'
                             : 'bg-white/10 hover:bg-white/20 text-gray-200 border border-white/20'
                     }`}
                 >
-                  🌙 Tonight
+                  {typeof Moon === 'function' && <Moon className="w-4 h-4" />}
+                  Tonight
                 </button>
                 <button
                     onClick={() => onFilterChange('date', 'tomorrow')}
-                    className={`flex-1 py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                    className={`flex-1 py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
                         filters.date === 'tomorrow'
                             ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25 scale-105'
                             : 'bg-white/10 hover:bg-white/20 text-gray-200 border border-white/20'
                     }`}
                 >
-                  🌅 Tomorrow
+                  {typeof Sun === 'function' && <Sun className="w-4 h-4" />}
+                  Tomorrow
                 </button>
               </div>
             </div>
@@ -276,13 +306,14 @@ const FilterBar: React.FC<FilterBarProps> = ({
             {/* More Filters Toggle */}
             <button
                 onClick={toggleExpanded}
-                className={`w-full py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 mb-4 ${
+                className={`w-full py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 mb-4 flex items-center justify-center gap-2 ${
                     isExpanded
                         ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25'
                         : 'bg-white/10 hover:bg-white/20 text-gray-200 border border-white/20'
                 }`}
             >
-              {isExpanded ? '🔼 Hide Advanced Filters' : '🔽 More Filters'}
+              {typeof Filter === 'function' && <Filter className="w-4 h-4" />}
+              {isExpanded ? 'Hide Advanced Filters' : 'More Filters'}
             </button>
 
             {/* Collapsible Advanced Filters */}
@@ -293,7 +324,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 {/* Location Input */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-                    📍 Search Location
+                    {typeof MapPin === 'function' && <MapPin className="w-4 h-4" />}
+                    Search Location
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -311,7 +343,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                         className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl transition-all duration-200 shadow-lg shadow-purple-500/25 hover:scale-105 active:scale-95"
                         aria-label="Use current location"
                     >
-                      <LocationPinIcon className="w-5 h-5" />
+                      {typeof MapPin === 'function' && <MapPin className="w-5 h-5" />}
                     </button>
                   </div>
                 </div>
@@ -319,7 +351,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 {/* Custom Date Picker */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-                    📅 Custom Date
+                    {typeof Calendar === 'function' && <Calendar className="w-4 h-4" />}
+                    Custom Date
                   </label>
                   <input
                       type="date"
@@ -341,7 +374,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                       value={filters.danceStyle}
                       onChange={(e) => onFilterChange('danceStyle', e.target.value as DanceStyle)}
                       options={DANCE_STYLE_OPTIONS}
-                      icon="💃"
+                      icon={Music}
                   />
                   <SelectInput
                       id="eventType"
@@ -349,7 +382,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                       value={filters.eventType}
                       onChange={(e) => onFilterChange('eventType', e.target.value as EventType)}
                       options={EVENT_TYPE_OPTIONS}
-                      icon="🎭"
+                      icon={Users}
                   />
                   <SelectInput
                       id="costCategory"
@@ -357,7 +390,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                       value={filters.costCategory}
                       onChange={(e) => onFilterChange('costCategory', e.target.value as CostCategory)}
                       options={COST_CATEGORY_OPTIONS}
-                      icon="💰"
+                      icon={DollarSign}
                   />
                   <DistanceSlider
                       value={filters.radius}
@@ -370,7 +403,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                           value={filters.skillLevel}
                           onChange={(e) => onFilterChange('skillLevel', e.target.value as SkillLevel)}
                           options={SKILL_LEVEL_OPTIONS}
-                          icon="📊"
+                          icon={BarChart3}
                       />
                   )}
                 </div>
@@ -381,15 +414,18 @@ const FilterBar: React.FC<FilterBarProps> = ({
             <button
                 onClick={handleUpdateSearch}
                 disabled={isSearching}
-                className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-700 hover:via-pink-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl shadow-purple-500/25 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+                className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-700 hover:via-pink-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl shadow-purple-500/25 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed mt-6 flex items-center justify-center gap-2"
             >
               {isSearching ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                  <>
+                    {typeof Loader2 === 'function' && <Loader2 className="w-5 h-5 animate-spin" />}
                     Searching...
-                  </div>
+                  </>
               ) : (
-                  '🔍 Update Search'
+                  <>
+                    {typeof Search === 'function' && <Search className="w-5 h-5" />}
+                    Update Search
+                  </>
               )}
             </button>
 
@@ -403,31 +439,26 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
           {/* Desktop View */}
           <div className="hidden lg:block p-8">
-            {/* Current Location Display for Desktop */}
-            {currentLocation && (
-                <div className="mb-6">
-                  <LocationDisplay
-                      lat={currentLocation.lat}
-                      lng={currentLocation.lng}
-                      showCoordinates={true}
-                      className="max-w-md mx-auto"
-                  />
-                </div>
-            )}
-
             {/* Filter Presets */}
             <div className="mb-8">
-              <h3 className="text-lg font-bold text-white mb-4 text-center">🚀 Quick Filters</h3>
+              <h3 className="text-lg font-bold text-white mb-4 text-center flex items-center justify-center gap-2">
+                {typeof Star === 'function' && <Star className="w-5 h-5" />}
+                Quick Filters
+              </h3>
               <div className="flex justify-center gap-4 flex-wrap">
-                {FILTER_PRESETS.map((preset, index) => (
-                    <button
-                        key={index}
-                        onClick={() => handlePresetClick(preset)}
-                        className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl text-white font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
-                    >
-                      {preset.name}
-                    </button>
-                ))}
+                {FILTER_PRESETS.map((preset, index) => {
+                  const IconComponent = preset.icon;
+                  return (
+                      <button
+                          key={index}
+                          onClick={() => handlePresetClick(preset)}
+                          className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl text-white font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2"
+                      >
+                        {IconComponent && typeof IconComponent === 'function' && <IconComponent className="w-4 h-4" />}
+                        {preset.name}
+                      </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -442,7 +473,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 {/* Manual Location Input */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-                    📍 Search Location
+                    {typeof MapPin === 'function' && <MapPin className="w-4 h-4" />}
+                    Search Location
                   </label>
                   <div className="flex items-center gap-3">
                     <input
@@ -460,7 +492,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                         className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl transition-all duration-200 shadow-lg shadow-purple-500/25 hover:scale-105 active:scale-95"
                         aria-label="Use current location"
                     >
-                      <LocationPinIcon className="w-5 h-5" />
+                      {typeof MapPin === 'function' && <MapPin className="w-5 h-5" />}
                     </button>
                   </div>
                 </div>
@@ -468,29 +500,32 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 {/* Date Filter */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-                    📅 When?
+                    {typeof Calendar === 'function' && <Calendar className="w-4 h-4" />}
+                    When?
                   </label>
                   <div className="space-y-3">
                     <div className="flex gap-2">
                       <button
                           onClick={() => onFilterChange('date', 'tonight')}
-                          className={`flex-1 py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                          className={`flex-1 py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
                               filters.date === 'tonight'
                                   ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25'
                                   : 'bg-white/10 hover:bg-white/20 text-gray-200 border border-white/20'
                           }`}
                       >
-                        🌙 Tonight
+                        {typeof Moon === 'function' && <Moon className="w-4 h-4" />}
+                        Tonight
                       </button>
                       <button
                           onClick={() => onFilterChange('date', 'tomorrow')}
-                          className={`flex-1 py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                          className={`flex-1 py-3 px-4 text-sm font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
                               filters.date === 'tomorrow'
                                   ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25'
                                   : 'bg-white/10 hover:bg-white/20 text-gray-200 border border-white/20'
                           }`}
                       >
-                        🌅 Tomorrow
+                        {typeof Sun === 'function' && <Sun className="w-4 h-4" />}
+                        Tomorrow
                       </button>
                     </div>
                     <input
@@ -515,7 +550,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                     value={filters.danceStyle}
                     onChange={(e) => onFilterChange('danceStyle', e.target.value as DanceStyle)}
                     options={DANCE_STYLE_OPTIONS}
-                    icon="💃"
+                    icon={Music}
                 />
                 <SelectInput
                     id="desktop-eventType"
@@ -523,7 +558,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                     value={filters.eventType}
                     onChange={(e) => onFilterChange('eventType', e.target.value as EventType)}
                     options={EVENT_TYPE_OPTIONS}
-                    icon="🎭"
+                    icon={Users}
                 />
                 <SelectInput
                     id="desktop-costCategory"
@@ -531,7 +566,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                     value={filters.costCategory}
                     onChange={(e) => onFilterChange('costCategory', e.target.value as CostCategory)}
                     options={COST_CATEGORY_OPTIONS}
-                    icon="💰"
+                    icon={DollarSign}
                 />
               </div>
 
@@ -544,7 +579,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                         value={filters.skillLevel}
                         onChange={(e) => onFilterChange('skillLevel', e.target.value as SkillLevel)}
                         options={SKILL_LEVEL_OPTIONS}
-                        icon="📊"
+                        icon={BarChart3}
                     />
                 )}
                 <DistanceSlider
@@ -559,15 +594,18 @@ const FilterBar: React.FC<FilterBarProps> = ({
               <button
                   onClick={handleUpdateSearch}
                   disabled={isSearching}
-                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-700 hover:via-pink-700 hover:to-indigo-700 text-white font-bold py-4 px-12 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl shadow-purple-500/25 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-700 hover:via-pink-700 hover:to-indigo-700 text-white font-bold py-4 px-12 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl shadow-purple-500/25 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isSearching ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    <>
+                      {typeof Loader2 === 'function' && <Loader2 className="w-5 h-5 animate-spin" />}
                       Searching...
-                    </div>
+                    </>
                 ) : (
-                    '🔍 Update Search'
+                    <>
+                      {typeof Search === 'function' && <Search className="w-5 h-5" />}
+                      Update Search
+                    </>
                 )}
               </button>
             </div>
@@ -583,27 +621,27 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
         {/* Custom styles for the range slider */}
         <style jsx>{`
-        .slider::-webkit-slider-thumb {
-          appearance: none;
-          height: 20px;
-          width: 20px;
-          border-radius: 50%;
-          background: linear-gradient(45deg, #a855f7, #ec4899);
-          cursor: pointer;
-          box-shadow: 0 4px 8px rgba(168, 85, 247, 0.3);
-          border: 2px solid white;
-        }
-        
-        .slider::-moz-range-thumb {
-          height: 20px;
-          width: 20px;
-          border-radius: 50%;
-          background: linear-gradient(45deg, #a855f7, #ec4899);
-          cursor: pointer;
-          box-shadow: 0 4px 8px rgba(168, 85, 247, 0.3);
-          border: 2px solid white;
-        }
-      `}</style>
+          .slider::-webkit-slider-thumb {
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #a855f7, #ec4899);
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(168, 85, 247, 0.3);
+            border: 2px solid white;
+          }
+
+          .slider::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #a855f7, #ec4899);
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(168, 85, 247, 0.3);
+            border: 2px solid white;
+          }
+        `}</style>
       </div>
   );
 };
